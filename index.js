@@ -42,6 +42,16 @@ async function run() {
     });
 
     const toyCollection=client.db('carMaster').collection('toys')
+    const indexKeys = { name : 1};
+    const indexOptions = {name : "price"};
+    toyCollection.createIndex(indexKeys, indexOptions)
+
+
+    app.get('/carSearchByName/:text', async (req, res) =>{
+      const searchCar = req.params.text ;
+      const result = await toyCollection.find({name:{$regex: searchCar, $options: "i"}}).toArray();
+      res.send(result);
+    })
 
     //toys
     app.get('/toys', async(req,res)=>{
