@@ -22,13 +22,24 @@ const client = new MongoClient(uri, {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
-  }
+  },
+
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  maxPoolSize: 10,
+
 });
 
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
+    client.connect((error) => {
+      if (error) {
+        console.error(error);
+        return;
+      }
+    });
 
     const toyCollection=client.db('carMaster').collection('toys')
 
@@ -70,6 +81,7 @@ async function run() {
           price:updatedToy.price,
           quantity:updatedToy.quantity,
           seller:updatedToy.seller,
+          description:updatedToy.description,
         }
       }
 
@@ -82,6 +94,14 @@ async function run() {
       const query= {_id: new ObjectId(id)}
       const result = await toyCollection.deleteOne(query);
       res.send(result)
+    })
+
+    app.get('/shop', async(req,res)=>{
+      const category=req.query.category;
+      const query={category:category}
+      const result= await toyCollection.find(query).toArray()
+      res.send(result)
+      
     })
 
 
