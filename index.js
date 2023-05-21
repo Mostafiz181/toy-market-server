@@ -49,7 +49,7 @@ async function run() {
 
     app.get('/carSearchByName/:text', async (req, res) =>{
       const searchCar = req.params.text ;
-      const result = await toyCollection.find({name:{$regex: searchCar, $options: "i"}}).toArray();
+      const result = await toyCollection.find({carName:{$regex: searchCar, $options: "i"}}).toArray();
       res.send(result);
     })
 
